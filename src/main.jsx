@@ -1,13 +1,30 @@
-import React from "react";
+// import {
+//   createBrowserRouter,
+//   createRoutesFromElements,
+//   RouterProvider,
+//   Route,
+// } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router";
+
 import App from "./app/App";
 import "./index.css";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
 
-const root = document.getElementById("root");
+import Home from "./pages/Home";
 
-ReactDOM.createRoot(root).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<App />}>
+      <Route index element={<Home />} />
+    </Route>,
+  ),
+);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <RouterProvider router={router} />,
 );

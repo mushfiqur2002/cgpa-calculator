@@ -27,6 +27,11 @@ button {
   justify-content: space-between;
   align-items: center;
 }
+.center-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 .start-between {
   display: flex;
   justify-content: space-between;
