@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f8fafc;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1280px;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+.center-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.start-center {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.center-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.start-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: small;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+}
