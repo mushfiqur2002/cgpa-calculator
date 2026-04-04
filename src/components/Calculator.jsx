@@ -2,7 +2,7 @@ import { RotateCcw, Plus, Trash, ChevronUp } from "lucide-react";
 import React, { useState } from "react";
 export default function Calculator() {
   const [courseList, setcourseList] = useState([]);
-  const [clicked, setClicked] = useState(false);
+  const [clicked, setClicked] = useState(true);
   const createCourse = () => {
     setcourseList((prev) => [
       ...prev,
@@ -68,7 +68,7 @@ export default function Calculator() {
       </div>
       <div
         className={`
-  w-full h-full relative gap-4 md:gap-6 mt-4 flex justify-center items-start flex-col md:flex-row px-3 md:px-0 
+  w-full h-full relative gap-4 md:gap-6 mt-4 flex justify-center items-start flex-col md:flex-row 
   transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] 
   ${
     clicked
@@ -190,12 +190,12 @@ export default function Calculator() {
         <div className="w-auto h-fit sticky top-0 bg-[#f1f5f9] rounded-xl px-3 md:px-6 py-4 shadow-[0px_0px_0px_1px_rgba(0,0,0,0.1)]">
           <div className="w-full grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-4">
             <div className="center-center flex-col bg-white  px-6 py-4 rounded-lg border border-blue-100">
-              <p className="text-xs text-black font-thin">Total Credits</p>
+              <p className="text-xs text-black font-thin">TC</p>
               <p className="text-4xl font-bold text-black/80">{totalCredits}</p>
             </div>
 
             <div className="center-center flex-col bg-white px-6 py-4 rounded-lg border border-red-100">
-              <p className="text-xs text-black font-thin">Total Grade Points</p>
+              <p className="text-xs text-black font-thin">TGP</p>
               <p className="text-4xl font-bold text-black/80">
                 {totalGradePoints.toFixed(2)}
               </p>
