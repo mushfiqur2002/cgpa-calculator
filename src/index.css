@@ -12,6 +12,12 @@ body {
 button {
   cursor: pointer;
 }
+
+table{
+  td{
+    text-align: center;
+  }
+}
 .center-center {
   display: flex;
   justify-content: center;

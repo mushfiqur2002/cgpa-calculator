@@ -13,14 +13,19 @@ import Home from "./pages/Home";
 import { AuthProvider } from "./context/AuthProvider";
 import { AdminProvider } from "./admin/index/AdminProvider";
 import AdminRoute from "./admin/index/AdminRoute";
-import AdminDash from "./admin/design/components/AdminDash";
 import AdminLayout from "./admin/design/layouts/AdminLayout";
+import SemestersDash from "./admin/design/components/list/SemestersDash";
+import SubjectListDash from "./admin/design/components/list/SubjectListDash";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      <Route index element={<Home />} />
-      
+    <>
+      {/* ✅ Main Layout */}
+      <Route path="/" element={<App />}>
+        <Route index element={<Home />} />
+      </Route>
+
+      {/* ✅ Admin Layout (separate) */}
       <Route
         path="/admin"
         element={
@@ -29,9 +34,10 @@ const router = createBrowserRouter(
           </AdminRoute>
         }
       >
-        <Route index element={<AdminDash />} />
+        <Route index element={<SemestersDash />} />
+        <Route path="/admin/subjects" element={<SubjectListDash />} />
       </Route>
-    </Route>,
+    </>,
   ),
 );
 
