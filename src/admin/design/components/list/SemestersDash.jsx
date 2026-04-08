@@ -1,13 +1,17 @@
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { Edit, Trash } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "../../../../../firebase.config";
 
 export default function SemesterManager() {
   const [semester, setSemester] = useState([]);
   const [formData, setFormData] = useState({
-    name: "",
+    semester_name: "",
     year: "",
   });
+
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // handle input change
   const handleChange = (e) => {
@@ -19,34 +23,38 @@ export default function SemesterManager() {
   };
 
   // add or update
-  const enterSemester = (e) => {
+  const enterSemester = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (editId) {
-      // update
-      const updated = semester.map((item) =>
-        item.id === editId
-          ? { ...item, name: formData.name, year: formData.year }
-          : item,
-      );
+    try {
+      if (editId) {
+        // update
+        const updated = semester.map((item) =>
+          item.id === editId
+            ? { ...item, name: formData.name, year: formData.year }
+            : item,
+        );
+        setSemester(updated);
+        setEditId(null);
+      } else {
+        // add
+        const docRef = await addDoc(collection(db, "semesters"), {
+          semester_name: formData.semester_name,
+          year: formData.year,
+          total_credit: 0,
+          total_subject: 0,
+        });
+        alert("success", docRef.id);
+      }
 
-      setSemester(updated);
-      setEditId(null);
-    } else {
-      // add
-      const newSemester = {
-        id: Date.now(),
-        name: formData.name,
-        year: formData.year,
-        subjects: 0,
-        credits: 0,
-      };
-
-      setSemester((prev) => [...prev, newSemester]);
+      // reset form
+      setFormData({ semester_name: "", year: "" });
+    } catch (error) {
+      alert("something is error", error.message);
+    } finally {
+      setLoading(false);
     }
-
-    // reset form
-    setFormData({ name: "", year: "" });
   };
 
   // edit click
@@ -62,6 +70,19 @@ export default function SemesterManager() {
   const handleDelete = (id) => {
     setSemester((prev) => prev.filter((item) => item.id !== id));
   };
+
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "semesters"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(data);
+      setSemester(data);
+    });
+
+    return () => unsub();
+  }, []);
 
   return (
     <div className="">
@@ -79,10 +100,12 @@ export default function SemesterManager() {
           className="flex flex-col md:flex-row gap-3 bg-blue-100 p-3 rounded-lg"
         >
           <div className="flex flex-col">
-            <label className="text-sm">Name</label>
+            <label for="semester_name" className="text-sm">
+              Name
+            </label>
             <input
-              name="name"
-              value={formData.name}
+              name="semester_name"
+              value={formData.semester_name}
               onChange={handleChange}
               className="px-2 py-2 border border-[rgba(0,0,0,.3)] rounded-md mt-1"
               placeholder="1st semester"
@@ -90,7 +113,9 @@ export default function SemesterManager() {
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm">Year</label>
+            <label for="year" className="text-sm">
+              Year
+            </label>
             <input
               name="year"
               value={formData.year}
@@ -105,7 +130,7 @@ export default function SemesterManager() {
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
-              {editId ? "Update" : "+ Add"}
+              {loading ? "saving..." : editId ? "Update" : "+ Add"}
             </button>
 
             {editId && (
@@ -129,30 +154,34 @@ export default function SemesterManager() {
         <h1 className="mt-5 capitalize text-md mb-2">semester list</h1>
         <div className="overflow-x-auto">
           <table className="w-full border border-gray-200 whitespace-nowrap">
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-100 gap-2">
               <tr>
-                <th className="p-2 text-left">Semester Name</th>
-                <th className="p-2 text-left">Year</th>
-                <th className="p-2 text-left">Subjects</th>
-                <th className="p-2 text-left">Credits</th>
-                <th className="p-2 text-left">Actions</th>
+                <th className="p-2">No</th>
+                <th className="p-2">Semester Name</th>
+                <th className="p-2">Year</th>
+                <th className="p-2">Subjects</th>
+                <th className="p-2">Credits</th>
+                <th className="p-2">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {semester.length === 0 ? (
+              {loading ? (
+                "loading..."
+              ) : semester.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-4 text-gray-400">
+                  <td colSpan="5" className="text-center! py-4 text-gray-400">
                     No semesters added yet.
                   </td>
                 </tr>
               ) : (
-                semester.map((sem) => (
+                semester.map((sem, index) => (
                   <tr key={sem.id} className="border-t">
-                    <td className="p-2">{sem.name}</td>
-                    <td className="p-2">{sem.year}</td>
-                    <td className="p-2">{sem.subjects}</td>
-                    <td className="p-2">{sem.credits}</td>
+                    <td className="p-2 text-left">{index + 1}</td>
+                    <td className="p-2 text-left">{sem.semester_name}</td>
+                    <td className="p-2 text-left">{sem.year}</td>
+                    <td className="p-2 text-left">{sem.total_subject}</td>
+                    <td className="p-2 text-left">{sem.total_credit}</td>
                     <td className="p-2 center-center">
                       <button
                         onClick={() => handleEdit(sem)}

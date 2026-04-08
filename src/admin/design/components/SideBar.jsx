@@ -12,7 +12,6 @@ export default function SideBar() {
   const handleBar = () => {
     setActiveBar(!activeBar);
   };
-  console.log(window.location.href);
 
   return (
     <div
@@ -38,14 +37,15 @@ export default function SideBar() {
           <li key={index}>
             <NavLink
               to={link.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-2 py-2 rounded-md transition-all duration-200 whitespace-nowrap
+              end
+              className={({
+                isActive,
+              }) => `flex items-center gap-3 px-2 py-2 rounded-md transition-all duration-200 whitespace-nowrap
                 ${
                   isActive
                     ? "bg-blue-500 text-white"
                     : "text-gray-700 hover:bg-blue-100 hover:text-blue-500"
-                }`
-              }
+                }`}
             >
               <link.icon size={18} />
 

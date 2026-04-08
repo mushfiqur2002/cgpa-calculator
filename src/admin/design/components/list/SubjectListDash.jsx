@@ -1,10 +1,20 @@
+// import { addDoc, collection } from "firebase/firestore";
 import { Edit, Trash } from "lucide-react";
 import { useState } from "react";
+// import { db } from "../../../../../firebase.config";
 export default function SubjectListDash() {
-  const [semester, setSemester] = useState([]);
+  const [subjects, setSubject] = useState([]);
+  const semesters = [
+    { semester_name: "1st year", year: 2022 },
+    { semester_name: "2nd year", year: 2023 },
+    { semester_name: "3rd year", year: 2024 },
+    { semester_name: "4th year", year: 2025 },
+  ];
   const [formData, setFormData] = useState({
-    name: "",
-    year: "",
+    semester_name: "",
+    course_name: "",
+    course_credit: "",
+    course_code: "",
   });
   const [editId, setEditId] = useState(null);
 
@@ -18,34 +28,56 @@ export default function SubjectListDash() {
   };
 
   // add or update
-  const enterSemester = (e) => {
+  const enterSubjectList = async (e) => {
     e.preventDefault();
 
-    if (editId) {
-      // update
-      const updated = semester.map((item) =>
-        item.id === editId
-          ? { ...item, name: formData.name, year: formData.year }
-          : item,
-      );
+    try {
+      if (editId) {
+        // update
+        const updated = subjects.map((item) =>
+          item.id === editId
+            ? {
+                ...item,
+                semester_name: formData.semester_name,
+                course_name: formData.course_name,
+                course_credit: formData.course_name,
+                course_code: formData.course_name,
+              }
+            : item,
+        );
 
-      setSemester(updated);
-      setEditId(null);
-    } else {
-      // add
-      const newSemester = {
-        id: Date.now(),
-        name: formData.name,
-        year: formData.year,
-        subjects: 0,
-        credits: 0,
-      };
+        setSubject(updated);
+        setEditId(null);
+      } else {
+        // add
+        const newSemester = {
+          id: Date.now(),
+          semester_name: formData.semester_name,
+          course_name: formData.course_name,
+          course_credit: formData.course_credit,
+          course_code: formData.course_code,
+        };
 
-      setSemester((prev) => [...prev, newSemester]);
+        // await addDoc(collection(db, "semesters"), {
+        //   semester_name: "",
+        //   year: "",
+        //   total_credit: "",
+        //   total_subject: "",
+        // });
+
+        setSubject((prev) => [...prev, newSemester]);
+      }
+    } catch (error) {
+      alert("something wrong", error.message);
     }
 
     // reset form
-    setFormData({ name: "", year: "" });
+    setFormData({
+      semester_name: "",
+      course_name: "",
+      course_credit: "",
+      course_code: "",
+    });
   };
 
   // edit click
@@ -59,7 +91,7 @@ export default function SubjectListDash() {
 
   // delete
   const handleDelete = (id) => {
-    setSemester((prev) => prev.filter((item) => item.id !== id));
+    setSubject((prev) => prev.filter((item) => item.id !== id));
   };
   return (
     <div className="">
@@ -73,28 +105,56 @@ export default function SubjectListDash() {
       <div className="mt-4">
         <h1 className="capitalize text-md mb-2">enter data</h1>
         <form
-          onSubmit={enterSemester}
+          onSubmit={enterSubjectList}
           className="flex flex-col md:flex-row gap-3 bg-blue-100 p-3 rounded-lg"
         >
           <div className="flex flex-col">
-            <label className="text-sm">Name</label>
+            <label for="semester_name" className="capitlaize text-sm">
+              Semester Name
+            </label>
+            <select
+              name="semester_name"
+              onChange={handleChange}
+              className="px-2 py-2 border border-[rgba(0,0,0,.3)] rounded-md mt-1"
+              placeholder="semester Name"
+            >
+              {/* <option value="volvo">Volvo</option>
+              <option value="saab">Saab</option>
+              <option value="mercedes">Mercedes</option>
+              <option value="audi">Audi</option> */}
+              {semesters.map((semester, index) => (
+                <option key={index} value={semester.semester_name}>
+                  {semester.semester_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label for="course_name" className="capitlaize text-sm">
+              Name
+            </label>
             <input
-              name="name"
+              type="text"
+              name="course_name"
               value={formData.name}
               onChange={handleChange}
               className="px-2 py-2 border border-[rgba(0,0,0,.3)] rounded-md mt-1"
-              placeholder="1st semester"
+              placeholder="Course Name"
             />
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm">Year</label>
+            <label for="course_credit" className="capitalize text-sm">
+              credit
+            </label>
             <input
-              name="year"
+              type="number"
+              name="course_credit"
               value={formData.year}
               onChange={handleChange}
               className="px-2 py-2 border border-[rgba(0,0,0,.3)] rounded-md mt-1"
-              placeholder="2022"
+              placeholder="3"
             />
           </div>
 
@@ -138,14 +198,14 @@ export default function SubjectListDash() {
             </thead>
 
             <tbody>
-              {semester.length === 0 ? (
+              {subjects.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="text-center py-4 text-gray-400">
                     No semesters added yet.
                   </td>
                 </tr>
               ) : (
-                semester.map((sem) => (
+                subjects.map((sem) => (
                   <tr key={sem.id} className="border-t">
                     <td className="p-2">{sem.name}</td>
                     <td className="p-2">{sem.year}</td>
